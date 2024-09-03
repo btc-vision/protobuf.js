@@ -55,12 +55,13 @@ BufferWriter.prototype.bytes = function write_bytes_buffer(value) {
 };
 
 function writeStringBuffer(val, buf, pos) {
-    if (val.length < 40) // plain js is faster for short strings (probably due to redundant assertions)
+    if (val.length < 40) { // plain js is faster for short strings (probably due to redundant assertions)
         util.utf8.write(val, buf, pos);
-    else if (buf.utf8Write)
-        buf.utf8Write(val, pos);
-    else
+    } else if (buf.utf8Write) {
+        buf.utf8Write(val, pos, val.length); // see https://github.com/nodejs/node/blob/298dea0c635e776cf00fc9014e6e4ce2f760e039/lib/internal/buffer.js#L1061
+    } else {
         buf.write(val, pos);
+    }
 }
 
 /**
